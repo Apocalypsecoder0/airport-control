@@ -1567,8 +1567,7 @@ int main()
 }
 
 //------------------------------------------------------------------------------
-/*ICS 4M1
-Assignment #3
+
 
 The Unknow Name airline system has hired you to develop a database system
 to keep track of airline reservations and flights.
