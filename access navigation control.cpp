@@ -1,9 +1,9 @@
 
 /*access navigation control
   Name: engine reservation  Program
-  Author: Stephen Lloyd Deline Jr
-  Date Started: 4/29/2008
-  Date Stop: 9/03/2008 14:24
+  Author: apocalypse coder0
+  Date Started: 2018 /5/2
+  Date Stop: 2018/5/2
   Version 1.0
   Description: C++ engine reservation Database System
 */
