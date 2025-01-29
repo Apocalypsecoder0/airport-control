@@ -1,10 +1,10 @@
 # airline_database.txt
 
 # Flights Section
-Flight Number,Departure City,Arrival City,Date of Flight,Departure Time,Arrival Time
-FL001,New York,Los Angeles,2023-12-01,08:00,11:00
-FL002,Chicago,Miami,2023-12-02,09:00,13:00
-FL003,San Francisco,Seattle,2023-12-03,07:30,09:30
+Flight Number,Departure City,Arrival City,Date of Flight,Departure Time,Arrival Time,IATA Code
+FL001,New York,Los Angeles,2023-12-01,08:00,11:00,AA
+FL002,Chicago,Miami,2023-12-02,09:00,13:00,UA
+FL003,San Francisco,Seattle,2023-12-03,07:30,09:30,DL
 
 # Reservations Section
 Reservation ID,Passenger ID,Flight Number,Cost

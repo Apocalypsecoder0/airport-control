@@ -7,7 +7,8 @@ CREATE TABLE flights (
     arrival_city VARCHAR(50),
     date_of_flight DATE,
     departure_time TIME,
-    arrival_time TIME
+    arrival_time TIME,
+    iata_code VARCHAR(3)
 );
 
 -- Create Passengers Table
