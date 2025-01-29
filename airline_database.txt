@@ -1,0 +1,19 @@
+# airline_database.txt
+
+# Flights Section
+Flight Number,Departure City,Arrival City,Date of Flight,Departure Time,Arrival Time
+FL001,New York,Los Angeles,2023-12-01,08:00,11:00
+FL002,Chicago,Miami,2023-12-02,09:00,13:00
+FL003,San Francisco,Seattle,2023-12-03,07:30,09:30
+
+# Reservations Section
+Reservation ID,Passenger ID,Flight Number,Cost
+R001,P001,FL001,300
+R002,P002,FL002,200
+R003,P003,FL003,150
+
+# Passengers Section
+Passenger ID,First Name,Last Name,Address,City
+P001,John,Doe,123 Elm St,New York
+P002,Jane,Smith,456 Oak St,Chicago
+P003,Bob,Brown,789 Pine St,San Francisco

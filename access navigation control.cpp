@@ -1,4 +1,3 @@
-
 /*access navigation control
   Name: engine reservation  Program
   Author: apocalypse coder0
@@ -17,6 +16,11 @@
 #include <cstring>
 #include <iostream>
 #include <cctype>
+#include <fstream>
+#include <mysql_driver.h>
+#include <mysql_connection.h>
+#include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
 
 struct flight;  //Forward Declaration of Flight structure
 
@@ -37,6 +41,10 @@ engine reservation * enter_flight_menu(engine reservation  *start1);
 void write_to_file(engine reservation  *start1);
 engine reservation * read_from_file();
 engine reservation * airline_menu(engine reservation  *start1);
+void read_and_insert_data();
+void insert_flight_data(sql::Connection *con, const std::string &flight_number, const std::string &departure_city, const std::string &arrival_city, const std::string &date_of_flight, const std::string &departure_time, const std::string &arrival_time);
+void insert_reservation_data(sql::Connection *con, const std::string &reservation_id, const std::string &passenger_id, const std::string &flight_number, const std::string &cost);
+void insert_passenger_data(sql::Connection *con, const std::string &passenger_id, const std::string &first_name, const std::string &last_name, const std::string &address, const std::string &city);
 
 //Flight List Structure And Function Declarations
 
@@ -159,10 +167,10 @@ engine reservation * create_airline_node(engine reservation  *start1)  //Creates
 
 engine reservation * enter_airline_info(engine reservation  *node)  //Function to enter the information about the airline, this function is
 {                                           //called from the function create_airline_node(airline *start1)by itself.
-	printf("\n");
-	printf(" Welcome To  Name Airport\n");
-	printf("Please enter the Airline Name\n");
-	printf("\n");
+	printf("\\n");
+	printf(" Welcome To  Name Airport\\n");
+	printf("Please enter the Airline Name\\n");
+	printf("\\n");
 	fflush(stdin);
 	node->airlinename = new char [80];
 	gets(node->airlinename);
@@ -174,14 +182,14 @@ engine reservation * delete_airline_node(engine reservation  *start)  //Function
 {                                             //searches for the name and deletes if it is found.
 	if(start1 == NULL)
 	{
-		printf("\n");
-		printf("Sorry, this Airport is not operational at this moment\n");
+		printf("\\n");
+		printf("Sorry, this Airport is not operational at this moment\\n");
 }
 	else
 {
 		char airlinename[80];
-		printf("\n");
-		printf("Please enter the  name of the Airline you want to delete\n");
+		printf("\\n");
+		printf("Please enter the  name of the Airline you want to delete\\n");
 		fflush(stdin);
 		gets(airlinename);
 		engine reservation  *count_node1, *count_node2;
@@ -212,8 +220,8 @@ engine reservation * delete_airline_node(engine reservation  *start)  //Function
 }
 	else
 {
-			printf("\n");
-			printf("Sorry, this airline is currently not in service at this airport\n");
+			printf("\\n");
+			printf("Sorry, this airline is currently not in service at this airport\\n");
 }
 }
 	return start1;
@@ -224,15 +232,15 @@ void print_airline_list(engine reservation  *start) /*Function to print all the 
 {
 	if (start1 == NULL)
  {
-		printf("\n");
-		printf("Sorry, this Airport is not operational at this moment\n");
+		printf("\\n");
+		printf("Sorry, this Airport is not operational at this moment\\n");
   }
 	else
 {
-		printf("\n");
+		printf("\\n");
 		engine reservation  *count;
 		for (count = start1; count != NULL; count = count->next)
-		printf("%s\n", count->airlinename);
+		printf("%s\\n", count->airlinename);
 	}
 }
 
@@ -240,9 +248,9 @@ engine reservation * enter_flight_menu(engine reservation  *start1)  /*Function 
                                              entered and enter its flight list menu*/
 {
 	char airlinename[80];
-	printf("\n");
-	printf("Welcome to the Flight List Menu\n");
-	printf("Enter the Airline name you wish to check\n");
+	printf("\\n");
+	printf("Welcome to the Flight List Menu\\n");
+	printf("Enter the Airline name you wish to check\\n");
 	fflush(stdin);
 	gets(airlinename);
 	engine reservation  *count;
@@ -251,13 +259,13 @@ engine reservation * enter_flight_menu(engine reservation  *start1)  /*Function 
       count = count->next);
 	if(count == NULL)
 	{
-		printf("\n");
-		printf("Sorry, this airline does not operate in this airport\n");
+		printf("\\n");
+		printf("Sorry, this airline does not operate in this airport\\n");
 		return start1;
 	}
 	else
 	{
-		printf("\n");
+		printf("\\n");
 		count->node1 = flight_menu(count->node1);
 		return start1;
 	}
@@ -799,14 +807,14 @@ engine reservation * read_from_file()  //read from file airline.txt
 engine reservation * airline_menu(engine reservation  *start)  //Menu Function which is handles the airlinelist
 {
 	int choice;
-	printf("Welcome to the Unknow Name Airline System Main Menu\n");
-	printf("Please enter your choice from the menu shown below\n");
-	printf("1: Add a new airline to this airport\n");
-	printf("2: Delete an airline from the airport\n");
-	printf("3: Display the Airlines List at this Airport\n");
-    printf("4: Enter Flight menu for an airline\n");
-	printf("5: Exit the program\n");
-	printf("To Save exit the program from system main menu\n");
+	printf("Welcome to the Unknow Name Airline System Main Menu\\n");
+	printf("Please enter your choice from the menu shown below\\n");
+	printf("1: Add a new airline to this airport\\n");
+	printf("2: Delete an airline from the airport\\n");
+	printf("3: Display the Airlines List at this Airport\\n");
+    printf("4: Enter Flight menu for an airline\\n");
+	printf("5: Exit the program\\n");
+	printf("To Save exit the program from system main menu\\n");
 	scanf ("%d", &choice);
 	switch(choice)
 	{
@@ -836,7 +844,7 @@ engine reservation * airline_menu(engine reservation  *start)  //Menu Function w
 			start1 = airline_menu(start1);
 		} break;
 	}
-	printf("\n");
+	printf("\\n");
 	start1 = airline_menu(start1);
 	return start1;
 }
@@ -845,7 +853,7 @@ engine reservation * airline_menu(engine reservation  *start)  //Menu Function w
 
 flight* create_flight_node(flight *start2)  // Creates a sorted list of flights (default entry sort condition by flight no.)
 {                                           // by entering the flight node at the sorted position,
-    printf("\n");                           // it calls the function "enter_flight_info() to ask the
+    printf("\\n");                           // it calls the function "enter_flight_info() to ask the
 	if (start2 == NULL)                     // user for its information
 	{
 		start2 = (flight *) malloc(sizeof(flight));
@@ -881,28 +889,28 @@ flight* create_flight_node(flight *start2)  // Creates a sorted list of flights 
 
 flight* enter_flight_info(flight *node)  // Function to enter the information about the flight, this function is
 {                                        // called from the function create_flight_node(flight *start)by itself.
-	printf(" Welcome to the Flight List\n");
-	printf("Please enter the Flight number\n"); //Flight Number (unique key)
+	printf(" Welcome to the Flight List\\n");
+	printf("Please enter the Flight number\\n"); //Flight Number (unique key)
 	       fflush(stdin);
 	       node->flightnumber = new char [80];
 	       gets(node->flightnumber);
-	printf("Please enter the Date of Flight\n");  //Date of Flight
+	printf("Please enter the Date of Flight\\n");  //Date of Flight
            fflush(stdin);
 	       node->date_of_flight = new char [80];
 	       gets(node->date_of_flight);
-	printf("Please enter the Departure Location\n");  //Departure From City
+	printf("Please enter the Departure Location\\n");  //Departure From City
 	       fflush(stdin);
 	       node->departure_location = new char [80];
 	       gets(node->departure_location);
-	printf("Please enter the Arrival Location\n");  //Arrival At City
+	printf("Please enter the Arrival Location\\n");  //Arrival At City
 	       fflush(stdin);
 	       node->arrival_location = new char [80];
 	       gets(node->arrival_location);
-	printf("Please enter the Take off time\n");  //Departuare time
+	printf("Please enter the Take off time\\n");  //Departuare time
 	       fflush(stdin);
            node->take_off_time = new char [80];
 	       gets(node->take_off_time);
-    printf("Please enter the Arrival time\n");  //Arrival time
+    printf("Please enter the Arrival time\\n");  //Arrival time
            fflush(stdin);
            node->arrival_time = new char [80];
 	       gets(node->arrival_time);
@@ -913,16 +921,16 @@ flight* enter_flight_info(flight *node)  // Function to enter the information ab
 
 flight* delete_flight_node(flight *start2)  // Function to delete the name of a flight, function
 {                                           // searches for the name and deletes if it is found.
-	printf("\n");
+	printf("\\n");
 
 	if(start2 == NULL)
 	{
-		printf("Sorry, no available Flights today\n");
+		printf("Sorry, no available Flights today\\n");
 	}
 	else
 	{
 		char flightnumber[80];
-	printf("Please enter the flight number you want to delete\n");
+	printf("Please enter the flight number you want to delete\\n");
 		fflush(stdin);
 		gets(flightnumber);
 		flight *count_node1, *count_node2;
@@ -953,8 +961,8 @@ flight* delete_flight_node(flight *start2)  // Function to delete the name of a 
 	}
 		else
 		{
-			printf("\n");
-			printf("Sorry, this name was not found in this list\n");
+			printf("\\n");
+			printf("Sorry, this name was not found in this list\\n");
 		}
 	}
 	return start2;
@@ -962,33 +970,33 @@ flight* delete_flight_node(flight *start2)  // Function to delete the name of a 
 
 void print_flight_list(flight *start2)
 {
-	printf("\n");
+	printf("\\n");
 	if (start2 == NULL)
 	{
-		printf("Sorry, the Flight List is empty\n");
+		printf("Sorry, the Flight List is empty\\n");
 	}
 	else
 	{
 		flight *count;
 		for (count = start2; count != NULL; count = count->next)
 		{
-			printf("Flight Number : %s\n", count->flightnumber);
-			printf("Data of Flight : %s\n", count->date_of_flight);
-		    printf("Departure Location : %s\n", count->departure_location);
-		    printf("Arrival Location : %s\n", count->arrival_location);
-		    printf("Take off Time : %s\n", count->take_off_time);
-		    printf("Arrival Time : %s\n", count->arrival_time);
-			printf("\n");
+			printf("Flight Number : %s\\n", count->flightnumber);
+			printf("Data of Flight : %s\\n", count->date_of_flight);
+		    printf("Departure Location : %s\\n", count->departure_location);
+		    printf("Arrival Location : %s\\n", count->arrival_location);
+		    printf("Take off Time : %s\\n", count->take_off_time);
+		    printf("Arrival Time : %s\\n", count->arrival_time);
+			printf("\\n");
 		}
 	}
 }
 
 flight* enter_passenger_menu(flight *start2)  // Function to search for the flight entered and enter its passenger list menu
 {
-	printf("\n");
+	printf("\\n");
 	char flightnumber[80];
-	printf("Welcome to the passenger list Menu\n");
-	printf("Enter the Flight Number you wish to check\n");
+	printf("Welcome to the passenger list Menu\\n");
+	printf("Enter the Flight Number you wish to check\\n");
 	fflush(stdin);
 	gets(flightnumber);
 	flight *count;
@@ -996,7 +1004,7 @@ flight* enter_passenger_menu(flight *start2)  // Function to search for the flig
      count = count->next);
 	if(count == NULL)
 	{
-		printf("Sorry, this flight is not available\n");
+		printf("Sorry, this flight is not available\\n");
 		return start2;
 	}
 	else
@@ -1009,15 +1017,15 @@ flight* enter_passenger_menu(flight *start2)  // Function to search for the flig
 flight* flight_menu(flight *start2)  // Menu Function which is handles the flightlist for an airline
 {
 	int choice;
-	printf("Welcome to the Flight menu\n");
-	printf("Please enter your choice from the menu shown below\n");
-	printf("1: Add a new Flight to this Airline\n");
-	printf("2: Delete a Flight from the Airline\n");
-	printf("3: Display the Flight List for the Airline\n");
-    printf("4: Enter passenger menu for a flight\n");
-    printf("5: Enter reservation menu for a flight\n");
-    printf("6: Enter Passenger seat assignment menu\n");
-	printf("7: Return back to the Main Menu\n");
+	printf("Welcome to the Flight menu\\n");
+	printf("Please enter your choice from the menu shown below\\n");
+	printf("1: Add a new Flight to this Airline\\n");
+	printf("2: Delete a Flight from the Airline\\n");
+	printf("3: Display the Flight List for the Airline\\n");
+    printf("4: Enter passenger menu for a flight\\n");
+    printf("5: Enter reservation menu for a flight\\n");
+    printf("6: Enter Passenger seat assignment menu\\n");
+	printf("7: Return back to the Main Menu\\n");
 	scanf ("%d", &choice);
 	switch(choice)
 	{
@@ -1054,7 +1062,7 @@ flight* flight_menu(flight *start2)  // Menu Function which is handles the fligh
 			start2 = flight_menu(start2);
 		} break;
 	}
-	printf("\n");
+	printf("\\n");
 	start2 = flight_menu(start2);
 	return start2;
 }
@@ -1064,7 +1072,7 @@ flight* flight_menu(flight *start2)  // Menu Function which is handles the fligh
 
 passenger* create_passenger_node(passenger *start3)  //Creates a sorted list of passengers by entering the passenger node at the
 {                                                    // sorted position, it calls the function "enter_passenger_info() to
-    printf("\n");                                    // ask the user for its information
+    printf("\\n");                                    // ask the user for its information
 	if (start3 == NULL)
 	{
 		start3 = (passenger *) malloc(sizeof(passenger));
@@ -1099,36 +1107,36 @@ passenger* create_passenger_node(passenger *start3)  //Creates a sorted list of 
 
 passenger* enter_passenger_info(passenger *node)  // Function to enter the name of the passenger, this function is called
 {                                                 // from the function create_passenger_node(passenger *start)by itself.
-	printf(" Welcome to the Passenger List\n");
-	printf("Please enter Passenger Name Suffix\n");
+	printf(" Welcome to the Passenger List\\n");
+	printf("Please enter Passenger Name Suffix\\n");
 	fflush(stdin);
 	node->name_suffix = new char [6];
 	gets(node->name_suffix);
-    printf("Please enter Passenger Full Name\n");
+    printf("Please enter Passenger Full Name\\n");
 	fflush(stdin);
 	node->name = new char [80];
 	gets(node->name);
-	printf("please enter Passenger ID\n");
+	printf("please enter Passenger ID\\n");
 	fflush(stdin);
 	node->passenger_id = new char [10];
 	gets(node->passenger_id);
-    printf("Please enter Passenger Address;\n");
+    printf("Please enter Passenger Address;\\n");
     fflush(stdin);
     node->address = new char [80];
 	gets(node->address);
-    printf("Please enter Passenger City\n");
+    printf("Please enter Passenger City\\n");
     fflush(stdin);
     node->city = new char [30];
 	gets(node->city);
-    printf("Please enter Gender\n");
+    printf("Please enter Gender\\n");
     fflush(stdin);
     node->gender = new char [10];
     gets(node->gender);
-    printf("Please enter Data Of Birth\n");
+    printf("Please enter Data Of Birth\\n");
     fflush(stdin);
     node->data_of_birth = new char [10];
     gets(node->data_of_birth);
-    printf("Please enter Weight\n");
+    printf("Please enter Weight\\n");
     fflush(stdin);
     node->weight = new char [10];
     gets(node->weight);
@@ -1137,16 +1145,16 @@ passenger* enter_passenger_info(passenger *node)  // Function to enter the name 
 
 passenger* delete_passenger_node(passenger *start3)  // Function to delete the name of a passenger in the flight, function
 {                                                    // searches for the name and deletes if it is found.
-	printf("\n");
+	printf("\\n");
 	if(start3 == NULL)
 	{
-		printf("\n");
-		printf("Sorry, the passenger list is empty\n");
+		printf("\\n");
+		printf("Sorry, the passenger list is empty\\n");
 	}
 	else
 	{
 		char name[80];
-		printf("Please enter the name of the passenger you want to delete\n");
+		printf("Please enter the name of the passenger you want to delete\\n");
 		fflush(stdin);
 		gets(name);
 		passenger *count_node1, *count_node2;
@@ -1176,8 +1184,8 @@ passenger* delete_passenger_node(passenger *start3)  // Function to delete the n
 	}
 	else
 	{
-		printf("\n");
-		printf("Sorry, this name was not found in this list\n");
+		printf("\\n");
+		printf("Sorry, this name was not found in this list\\n");
 	}
 }
 	return start3;
@@ -1185,14 +1193,14 @@ passenger* delete_passenger_node(passenger *start3)  // Function to delete the n
 
 passenger* passenger_menu(passenger *start3)  // Menu Function which is called from main and takes
 {                                             // over the program list after that
-	printf("\n");
+	printf("\\n");
 	int choice;
-	printf("Welcome to the passenger menu\n");
-	printf("Please enter your choice from the menu shown below\n");
-	printf("1: Add a passenger to this flight\n");
-	printf("2: Delete a passenger from this flight\n");
-	printf("3: Display the passenger list for this flight\n");
-	printf("4: Return back to the Flight Menu\n");
+	printf("Welcome to the passenger menu\\n");
+	printf("Please enter your choice from the menu shown below\\n");
+	printf("1: Add a passenger to this flight\\n");
+	printf("2: Delete a passenger from this flight\\n");
+	printf("3: Display the passenger list for this flight\\n");
+	printf("4: Return back to the Flight Menu\\n");
 	scanf ("%d", &choice);
 	switch(choice)
 	{
@@ -1223,23 +1231,23 @@ passenger* passenger_menu(passenger *start3)  // Menu Function which is called f
 
 void print_passenger_list(passenger *start3)
 {
-	printf("\n");
+	printf("\\n");
 	if (start3 == NULL)
 	{
-		printf("Sorry, the passenger list is empty\n");
+		printf("Sorry, the passenger list is empty\\n");
 	}
 	else
 	{
 		passenger *count;
 		for (count = start3; count != NULL; count = count->next)
-		printf("Passenger Name Suffix : %s\n", count->name_suffix);
-		printf("Passenger Name : %s\n", count->name);
-		printf("PassengerID : %s\n", count->passenger_id);
-        printf("Passenger Address : %s\n", count->address);
-        printf("Passenger City : %s\n", count->city);
-        printf("Passenger Gender : %s\n", count->gender);
-        printf("Passenger Data Of Birth : %s\n", count->data_of_birth);
-        printf("Passenger Weight : %s\n", count->weight);
+		printf("Passenger Name Suffix : %s\\n", count->name_suffix);
+		printf("Passenger Name : %s\\n", count->name);
+		printf("PassengerID : %s\\n", count->passenger_id);
+        printf("Passenger Address : %s\\n", count->address);
+        printf("Passenger City : %s\\n", count->city);
+        printf("Passenger Gender : %s\\n", count->gender);
+        printf("Passenger Data Of Birth : %s\\n", count->data_of_birth);
+        printf("Passenger Weight : %s\\n", count->weight);
 }
 
 }
@@ -1248,7 +1256,7 @@ void print_passenger_list(passenger *start3)
 
 reservation* create_reservation_node(reservation *start4)  //Creates a sorted list of reservation by entering the reservation node at the
 {                                                    // sorted position, it calls the function "enter_reservation_info() to
-    printf("\n");                                   // ask the user for its information
+    printf("\\n");                                   // ask the user for its information
 	if (start4 == NULL)
 	{
 		start4 = (reservation *) malloc(sizeof(reservation));
@@ -1284,20 +1292,20 @@ reservation* create_reservation_node(reservation *start4)  //Creates a sorted li
 
 reservation* enter_reservation_info(reservation *node)  //Function to enter the name of the passenger, this function is called
 {                                                 //from the function create_reservation_node(reservation *start)by itself.
-	printf(" Welcome to the Reservation List\n");
-	printf("Please enter your Reservation ID\n");
+	printf(" Welcome to the Reservation List\\n");
+	printf("Please enter your Reservation ID\\n");
 	fflush(stdin);
 	node->reservation_id = new char [80];
 	gets(node->reservation_id);
-	printf("please enter your Passenger ID\n");
+	printf("please enter your Passenger ID\\n");
 	fflush(stdin);
 	node->passenger_id = new char [10];
 	gets(node->passenger_id);
-    printf("Please enter your Flight Number;\n");
+    printf("Please enter your Flight Number;\\n");
     fflush(stdin);
     node->flight_number = new char [80];
 	gets(node->flight_number);
-    printf("Please enter your Cost\n");
+    printf("Please enter your Cost\\n");
     fflush(stdin);
     node->cost = new char [30];
 	gets(node->cost);
@@ -1306,16 +1314,16 @@ reservation* enter_reservation_info(reservation *node)  //Function to enter the 
 
 reservation* delete_reservation_node(reservation *start4)  //Function to delete the name of a passenger in the flight, function
 {                                                    //searches for the name and deletes if it is found.
-	printf("\n");
+	printf("\\n");
 	if(start4 == NULL)
 	{
-		printf("\n");
-		printf("Sorry, the reservation list is empty\n");
+		printf("\\n");
+		printf("Sorry, the reservation list is empty\\n");
 	}
 	else
 	{
 		char reservation_id[80];
-		printf("Please enter the reservation id you want to delete\n");
+		printf("Please enter the reservation id you want to delete\\n");
 		fflush(stdin);
 		gets(reservation_id);
 		reservation *count_node1, *count_node2;
@@ -1346,8 +1354,8 @@ reservation* delete_reservation_node(reservation *start4)  //Function to delete 
 	}
 	else
 	{
-		printf("\n");
-		printf("Sorry, this name was not found in this list\n");
+		printf("\\n");
+		printf("Sorry, this name was not found in this list\\n");
 	}
 }
 	return start4;
@@ -1355,14 +1363,14 @@ reservation* delete_reservation_node(reservation *start4)  //Function to delete 
 
 reservation* reservation_menu(reservation *start4)  //Menu Function which is called from main and takes
 {                                                   //over the program list after that
-	printf("\n");
+	printf("\\n");
 	int choice;
-	printf("Welcome to the Reservation menu\n");
-	printf("Please enter your choice from the menu shown below\n");
-	printf("1: Add a reservation to this flight\n");
-	printf("2: Delete a reservation from this flight\n");
-	printf("3: Display the reservation list for this flight\n");
-	printf("4: Return back to the passenger Menu\n");
+	printf("Welcome to the Reservation menu\\n");
+	printf("Please enter your choice from the menu shown below\\n");
+	printf("1: Add a reservation to this flight\\n");
+	printf("2: Delete a reservation from this flight\\n");
+	printf("3: Display the reservation list for this flight\\n");
+	printf("4: Return back to the passenger Menu\\n");
 	scanf ("%d", &choice);
 	switch(choice)
 	{
@@ -1393,26 +1401,26 @@ reservation* reservation_menu(reservation *start4)  //Menu Function which is cal
 
 void print_reservation_list(reservation *start4)
 {
-	printf("\n");
+	printf("\\n");
 	if (start4 == NULL)
 	{
-		printf("Sorry, the reservation list is empty\n");
+		printf("Sorry, the reservation list is empty\\n");
 	}
 	else
 	{
 		reservation *count;
 		for (count = start4; count != NULL; count = count->next)
-		printf("Reservation ID : %s\n", count->reservation_id);
-		printf("PassengerID : %s\n", count->passenger_id);
-        printf("Flight Number : %s\n", count->flight_number);
-        printf("Cost : %s\n", count->cost);
+		printf("Reservation ID : %s\\n", count->reservation_id);
+		printf("PassengerID : %s\\n", count->passenger_id);
+        printf("Flight Number : %s\\n", count->flight_number);
+        printf("Cost : %s\\n", count->cost);
 	}
 }
 //------------------------------------------------------------------------------
  Number Of Seats and Number Of Seats Booked
 seat_assignment* create_seat_assignment_node(seat_assignment *start5)  //Creates a sorted list of reservation by entering the reservation node at the
 {                                                    // sorted position, it calls the function "enter_reservation_info() to
-    printf("\n");                                    // ask the user for its information
+    printf("\\n");                                    // ask the user for its information
 	if (start5 == NULL)
 	{
 		start5 = (seat_assignment *) malloc(sizeof(seat_assignment));
@@ -1446,8 +1454,8 @@ seat_assignment* create_seat_assignment_node(seat_assignment *start5)  //Creates
 
 seat_assignment* enter_seat_assignment_info(seat_assignment *node)  // Function to enter the name of the passenger, this function is called
 {                                                 // from the function create_seat_assignment_node(seat_assignment *start)by itself.
-	printf(" Welcome to the Seat Assignment List\n");
-	printf("Please enter your \n");
+	printf(" Welcome to the Seat Assignment List\\n");
+	printf("Please enter your \\n");
 	fflush(stdin);
 	node->seat_assignment = new char [80];
 	gets(node->seat_assignment);
@@ -1457,16 +1465,16 @@ seat_assignment* enter_seat_assignment_info(seat_assignment *node)  // Function 
 seat_assignment* delete_seat_assignment_node(seat_assignment *start5)
 {                       // Function to delete the name of a seat_assignment in the flight, function
                        // searches for the name and deletes if it is found.
-	printf("\n");
+	printf("\\n");
 	if(start5 == NULL)
 	{
-		printf("\n");
-		printf("Sorry, the seat_assignment list is empty\n");
+		printf("\\n");
+		printf("Sorry, the seat_assignment list is empty\\n");
 	}
 	else
 	{
 		char seat_assignment[80];
-		printf("Please enter the seat_assignment you want to delete\n");
+		printf("Please enter the seat_assignment you want to delete\\n");
 		fflush(stdin);
 		gets(seat_assignment);
 		seat_assignment *count_node1, *count_node2;
@@ -1497,8 +1505,8 @@ seat_assignment* delete_seat_assignment_node(seat_assignment *start5)
 	}
 	else
 	{
-		printf("\n");
-		printf("Sorry, this name was not found in this list\n");
+		printf("\\n");
+		printf("Sorry, this name was not found in this list\\n");
 	}
 }
 	return start5;
@@ -1506,15 +1514,15 @@ seat_assignment* delete_seat_assignment_node(seat_assignment *start5)
 
 seat_assignment* seat_assignment_menu(seat_assignment *start5)  // Menu Function which is called from main and takes
 {                                                   // over the program list after that
-	printf("\n");
+	printf("\\n");
 	int choice;
-	printf("Welcome to the Seat Assignment menu\n");
-	printf("Please enter your choice from the menu shown below\n");
-	printf("1: Add a seat to this flight\n");
-	printf("2: Cancelled a seat from this flight\n");
-	printf("3: Move passenger seat\n");
-	printf("4: Display the passenger seat list for this flight\n");
-	printf("5: Return back to the passenger Menu\n");
+	printf("Welcome to the Seat Assignment menu\\n");
+	printf("Please enter your choice from the menu shown below\\n");
+	printf("1: Add a seat to this flight\\n");
+	printf("2: Cancelled a seat from this flight\\n");
+	printf("3: Move passenger seat\\n");
+	printf("4: Display the passenger seat list for this flight\\n");
+	printf("5: Return back to the passenger Menu\\n");
 	scanf ("%d", &choice);
 	switch(choice)
 	{
@@ -1545,25 +1553,107 @@ seat_assignment* seat_assignment_menu(seat_assignment *start5)  // Menu Function
 
 void print_seat_assignment_list(seat_assignment *start5)
 {
-	printf("\n");
+	printf("\\n");
 	if (start5 == NULL)
 	{
-		printf("Sorry, the seat assignment list is empty\n");
+		printf("Sorry, the seat assignment list is empty\\n");
 	}
 	else
 	{
 		seat_assignment *count;
 		for (count = start5; count != NULL; count = count->next)
-		printf("Seat Assignment : %s\n", count->seat_assignment);
+		printf("Seat Assignment : %s\\n", count->seat_assignment);
 	}
 }
-//Main Function Calling The Menu Function
+void read_and_insert_data() {
+    std::ifstream infile("airline_database.txt");
+    std::string line;
+    sql::mysql::MySQL_Driver *driver;
+    sql::Connection *con;
+
+    driver = sql::mysql::get_mysql_driver_instance();
+    con = driver->connect("tcp://127.0.0.1:3306", "user", "password");
+    con->setSchema("airline_database");
+
+    while (std::getline(infile, line)) {
+        if (line.find("Flight Number") != std::string::npos) {
+            while (std::getline(infile, line) && !line.empty()) {
+                std::istringstream iss(line);
+                std::string flight_number, departure_city, arrival_city, date_of_flight, departure_time, arrival_time;
+                std::getline(iss, flight_number, ',');
+                std::getline(iss, departure_city, ',');
+                std::getline(iss, arrival_city, ',');
+                std::getline(iss, date_of_flight, ',');
+                std::getline(iss, departure_time, ',');
+                std::getline(iss, arrival_time, ',');
+                insert_flight_data(con, flight_number, departure_city, arrival_city, date_of_flight, departure_time, arrival_time);
+            }
+        } else if (line.find("Reservation ID") != std::string::npos) {
+            while (std::getline(infile, line) && !line.empty()) {
+                std::istringstream iss(line);
+                std::string reservation_id, passenger_id, flight_number, cost;
+                std::getline(iss, reservation_id, ',');
+                std::getline(iss, passenger_id, ',');
+                std::getline(iss, flight_number, ',');
+                std::getline(iss, cost, ',');
+                insert_reservation_data(con, reservation_id, passenger_id, flight_number, cost);
+            }
+        } else if (line.find("Passenger ID") != std::string::npos) {
+            while (std::getline(infile, line) && !line.empty()) {
+                std::istringstream iss(line);
+                std::string passenger_id, first_name, last_name, address, city;
+                std::getline(iss, passenger_id, ',');
+                std::getline(iss, first_name, ',');
+                std::getline(iss, last_name, ',');
+                std::getline(iss, address, ',');
+                std::getline(iss, city, ',');
+                insert_passenger_data(con, passenger_id, first_name, last_name, address, city);
+            }
+        }
+    }
+    delete con;
+}
+
+void insert_flight_data(sql::Connection *con, const std::string &flight_number, const std::string &departure_city, const std::string &arrival_city, const std::string &date_of_flight, const std::string &departure_time, const std::string &arrival_time) {
+    sql::PreparedStatement *pstmt;
+    pstmt = con->prepareStatement("INSERT INTO flights(flight_number, departure_city, arrival_city, date_of_flight, departure_time, arrival_time) VALUES (?, ?, ?, ?, ?, ?)");
+    pstmt->setString(1, flight_number);
+    pstmt->setString(2, departure_city);
+    pstmt->setString(3, arrival_city);
+    pstmt->setString(4, date_of_flight);
+    pstmt->setString(5, departure_time);
+    pstmt->setString(6, arrival_time);
+    pstmt->execute();
+    delete pstmt;
+}
+
+void insert_reservation_data(sql::Connection *con, const std::string &reservation_id, const std::string &passenger_id, const std::string &flight_number, const std::string &cost) {
+    sql::PreparedStatement *pstmt;
+    pstmt = con->prepareStatement("INSERT INTO reservations(reservation_id, passenger_id, flight_number, cost) VALUES (?, ?, ?, ?)");
+    pstmt->setString(1, reservation_id);
+    pstmt->setString(2, passenger_id);
+    pstmt->setString(3, flight_number);
+    pstmt->setString(4, cost);
+    pstmt->execute();
+    delete pstmt;
+}
+
+void insert_passenger_data(sql::Connection *con, const std::string &passenger_id, const std::string &first_name, const std::string &last_name, const std::string &address, const std::string &city) {
+    sql::PreparedStatement *pstmt;
+    pstmt = con->prepareStatement("INSERT INTO passengers(passenger_id, first_name, last_name, address, city) VALUES (?, ?, ?, ?, ?)");
+    pstmt->setString(1, passenger_id);
+    pstmt->setString(2, first_name);
+    pstmt->setString(3, last_name);
+    pstmt->setString(4, address);
+    pstmt->setString(5, city);
+    pstmt->execute();
+    delete pstmt;
+}
 
 int main()
 {
-	start1 = read_from_file();
-	start1 = airline_menu(start1);
-	start1 = open from database();
+    read_and_insert_data();
+    start1 = airline_menu(start1);
 }
 
 //------------------------------------------------------------------------------
@@ -1600,5 +1690,3 @@ Some other notes:
 to be added to a reservation.
 
 	- Use the unique ID's so you do not repeat data in the files.*/
-
-

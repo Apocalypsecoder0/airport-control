@@ -20,6 +20,20 @@ cd airport-control
 # Compile the code using your preferred C++ compiler
 ```
 
+## Database Setup
+To set up the SQL database, follow these steps:
+
+1. Ensure you have MySQL installed and running on your system.
+2. Run the `database_setup.sql` script to create the necessary tables:
+   ```bash
+   mysql -u your_username -p < database_setup.sql
+   ```
+3. Populate the database using the `airline_database.txt` file by running the program, which will read the file and insert the data into the database.
+
+Dependencies:
+- MySQL Server
+- MySQL Connector/C++ (for database operations in the program)
+
 ## Usage
 Run the compiled program and follow the on-screen instructions to manage flights, passengers, and reservations.
 
