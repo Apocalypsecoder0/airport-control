@@ -1,34 +1,33 @@
-# airport-control
-airport menu control
+# Airport Control
 
-The Unknow Name airline system has hired you to develop a database system
-to keep track of airline reservations and flights.
+## Introduction
+The Unknown Name airline system has hired you to develop a database system to manage airline reservations and flights efficiently. This system is designed to streamline the process of booking and managing flights and reservations.
 
-Each flight requires the following information:
-Flight Number (unique key), Departure and Arrival City, Date of Flight,
-Departure and Arrival Time, Number of Seats, Number of Seats Booked
-and an array of passengers on the flight stored by passenger ID.
+## Features
+- Manage flights with details such as flight number, departure and arrival cities, date, times, and passenger lists.
+- Handle reservations with unique reservation IDs, passenger IDs, flight numbers, and costs.
+- Maintain passenger information including ID, name, address, and city.
+- Input screens for adding flights, passengers, and reservations.
+- Output screens for displaying flights and passengers.
+- Save and load data from files.
 
-Each reservation requires the following information:
-Reservation ID (unique key), Passenger ID, Flight Number, Cost
+## Installation
+To install the project, clone the repository and compile the source code using a C++ compiler. Ensure all dependencies are met.
 
-Each passenger requires the following information:
-Passenger ID (unique key), First Name, Last Name, Address, City
+```bash
+git clone https://github.com/Apocalypsecoder0/airport-control.git
+cd airport-control
+# Compile the code using your preferred C++ compiler
+```
 
-1)	Create structures for each of the above files and read the
-information from three separate data files.
+## Usage
+Run the compiled program and follow the on-screen instructions to manage flights, passengers, and reservations.
 
-2)	The airline also wants the following set up:
-a)	An input screen to add new flights (does not add passengers).
-b)	An input screen to add new passengers (does not add flights).
-c)	An input screen to add reservations (used to add passengers to flights).
-d)	An output screen to show all current flights, sorted by departure time.
-e)	An output screen to show all the passengers on a selected flight
- sorted by last name.
-f)	Add a save option to store the file.
+## Contributing
+Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure your code follows the project's coding standards.
 
-Some other notes:
-- Passengers and flights must already be in the system in order
-to be added to a reservation.
+## License
+This project is licensed under the GNU General Public License v3.0. See the LICENSE file for more details.
 
-	- Use the unique ID's so you do not repeat data in the files.*/
+## Contact Information
+For further inquiries, please contact the project maintainer at [email@example.com].
